@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Owner: Alex Heritier (@alex_heritier, alex.heritier@gmail.com). Be concise, direct, and implementation-focused. Telegraph important steps; minimize filler.
+Owner: Alex Heritier (@alex_heritier). Be concise, direct, and implementation-focused. Telegraph important steps; minimize filler.
 
 ## Workspace
 
