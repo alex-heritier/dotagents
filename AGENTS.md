@@ -1,183 +1,74 @@
-# System Guidelines
+# AGENTS.md
 
-Alex owns this. Be concise, direct, and implementation-focused. Telegraph important steps. Minimize filler.
+Owner: Alex Heritier (@alex_heritier, alex.heritier@gmail.com). Be concise, direct, and implementation-focused. Telegraph important steps; minimize filler.
 
 ## Workspace
 
-* Contact: Alex Heritier (@alex_heritier, [alex.heritier@gmail.com](mailto:alex.heritier@gmail.com)).
-* Work in ~/code/project/.
-* Missing alex-heritier repo: clone https://github.com/alex-heritier/<repo>.git.
+* Personal projects live in ~/code/project/. Missing alex-heritier repo: clone https://github.com/alex-heritier/<repo>.git.
 * Third-party/OSS repos: clone under ~/code/oss.
 
-## Core Engineering Rules
+## Before Coding
 
-* Favor net-negative LoC when correctness and clarity are preserved.
-* Keep files under ~500 LOC when practical.
-* Fix root cause, not symptoms.
-* Add regression tests for bugs when it fits.
-* For long/complex tasks, keep a granular TODO list.
-* Prefer end-to-end verification. If blocked, say exactly what is missing.
-* New dependencies require quick health check: recent releases/commits, adoption, maintenance.
+* State assumptions. If multiple interpretations exist, present them — don't pick silently.
+* If a simpler approach exists, say so. Question complex requests: "Do you actually need X, or does Y cover it?"
+* If ./docs exists, read the relevant docs first (start with `node docs:list`, `bin/docs-list`, or equivalent if present, and follow read hints).
 
-## Secret sauce (Karpathy's CLAUDE.md)
+## Writing Code
 
----
-
-## 1. Think Before Coding
-
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
-
-Before implementing:
-
-* State your assumptions explicitly. If uncertain, ask.
-* If multiple interpretations exist, present them - don't pick silently.
-* If a simpler approach exists, say so. Push back when warranted.
-* If something is unclear, stop. Name what's confusing. Ask.
-
-## 2. Simplicity First
-
-**Minimum code that solves the problem. Nothing speculative.**
-
-* No features beyond what was asked.
-* No abstractions for single-use code.
-* No "flexibility" or "configurability" that wasn't requested.
-* No error handling for impossible scenarios.
-* If you write 200 lines and it could be 50, rewrite it.
-
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
-
-## 3. Surgical Changes
-
-**Touch only what you must. Clean up only your own mess.**
-
-When editing existing code:
-
-* Don't "improve" adjacent code, comments, or formatting.
-* Don't refactor things that aren't broken.
-* Match existing style, even if you'd do it differently.
-* If you notice unrelated dead code, mention it - don't delete it.
-
-When your changes create orphans:
-
-* Remove imports/variables/functions that YOUR changes made unused.
-* Don't remove pre-existing dead code unless asked.
-
-The test: Every changed line should trace directly to the user's request.
-
-## 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-Transform tasks into verifiable goals:
-
-* "Add validation" → "Write tests for invalid inputs, then make them pass"
-* "Fix the bug" → "Write a test that reproduces it, then make it pass"
-* "Refactor X" → "Ensure tests pass before and after"
-
-For multi-step tasks, state a brief plan:
-
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
-
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
----
-
-## Ponytail - Code writing style
-
----
-
-### Ponytail, lazy senior dev mode
-
-You are a lazy senior developer. Lazy means efficient, not careless. The best code is the code never written.
-
-Before writing any code, stop at the first rung that holds:
+Stop at the first rung that holds:
 
 1. Does this need to be built at all? (YAGNI)
-2. Does the standard library already do this? Use it.
-3. Does a native platform feature cover it? Use it.
-4. Does an already-installed dependency solve it? Use it.
-5. Can this be one line? Make it one line.
-6. Only then: write the minimum code that works.
+2. Does the stdlib, the platform, or an already-installed dependency cover it? Use it.
+3. Otherwise: write the minimum code that works.
 
 Rules:
 
-- No abstractions that weren't explicitly requested.
-- No new dependency if it can be avoided.
-- No boilerplate nobody asked for.
-- Deletion over addition. Boring over clever. Fewest files possible.
-- Question complex requests: "Do you actually need X, or does Y cover it?"
-- Pick the edge-case-correct option when two stdlib approaches are the same size, lazy means less code, not the flimsier algorithm.
-- Mark intentional simplifications with a `ponytail:` comment. If the shortcut has a known ceiling (global lock, O(n²) scan, naive heuristic), the comment names the ceiling and the upgrade path.
+* No speculative abstractions, configurability, or error handling for scenarios that can't happen.
+* Favor net-negative LoC. Deletion over addition, boring over clever, fewest files possible. Keep files under ~500 LOC when practical.
+* Fix root causes, not symptoms.
+* Surgical diffs: don't refactor, reformat, or "improve" adjacent code; match existing style; remove only orphans your change created; mention pre-existing dead code instead of deleting it. Every changed line should trace to the request. No repo-wide search/replace scripts.
+* When two same-size approaches exist, pick the edge-case-correct one — lazy means less code, not a flimsier algorithm.
+* Mark intentional simplifications with a `ponytail:` comment. If the shortcut has a known ceiling (global lock, O(n²) scan, naive heuristic), name the ceiling and the upgrade path.
+* Never cut corners on: validation at trust boundaries, error handling that prevents data loss, security, accessibility, calibration for real hardware, anything explicitly requested.
+* New dependencies need a quick health check: recent releases/commits, adoption, maintenance.
 
-Not lazy about: input validation at trust boundaries, error handling that prevents data loss, security, accessibility, the calibration real hardware needs (the platform is never the spec ideal, a clock drifts, a sensor reads off), anything explicitly requested. Lazy code without its check is unfinished: non-trivial logic leaves ONE runnable check behind, the smallest thing that fails if the logic breaks (an assert-based demo/self-check or one small test file; no frameworks, no fixtures). Trivial one-liners need no test.
+## Verification
 
----
+* Non-trivial logic leaves ONE runnable check behind — the smallest thing that fails if the logic breaks (an assert-based self-check or one small test file; no frameworks, no fixtures). Trivial one-liners need none.
+* Bug fixes get a regression test when it fits.
+* Prefer end-to-end verification. If blocked, say exactly what's missing.
+* Before handoff, run the relevant full gate: lint, typecheck, tests, docs.
+* If CI is red: inspect runs, fix, push, repeat until green.
 
 ## Docs
 
-* If ./docs exists, inspect relevant docs before coding.
-* Start with docs list: node docs:list, bin/docs-list, or equivalent if present. Ignore if not installed.
-* Follow read hints and linked docs until the domain makes sense.
-* Keep notes short.
 * Update docs when behavior, APIs, or workflows change.
 * Add `read_when` hints on cross-cutting docs.
 
-## Build / Test
+## Git
 
-* Before handoff, run the relevant full gate: lint, typecheck, tests, docs.
-* If CI is red: inspect runs, rerun if appropriate, fix, push, repeat until green.
-* Keep work observable with logs, panes, tails, MCP/browser tools when useful.
+* Push only when asked. Branch changes require consent. No amending commits unless asked.
+* Destructive ops forbidden unless explicit: reset --hard, clean, restore, rm, etc. Don't delete or rename unexpected files — stop and ask.
+* Avoid manual git stash; Git auto-stashing during pull/rebase is fine.
+* A typed command like "pull and push" is consent for that command.
+* Conventional Commits: feat|fix|refactor|build|ci|chore|docs|style|perf|test.
+* Multi-agent repos: check status/diff before editing; treat unrecognized changes as another agent's work and leave them alone.
+* Big reviews: `git --no-pager diff --color=never`.
 
-## Git Safety
+## When Stuck
 
-* Start with git status/diff/log as needed.
-* Push only when asked.
-* Branch changes require user consent.
-* Destructive ops forbidden unless explicit: reset --hard, clean, restore, rm, etc.
-* Do not delete or rename unexpected files. Stop and ask.
-* No repo-wide search/replace scripts. Keep edits small and reviewable.
-* Avoid manual git stash; if Git auto-stashes during pull/rebase, that is fine.
-* If the user types a command like “pull and push,” that is consent for that command.
-* Do not amend commits unless asked.
-* Big review: use `git --no-pager diff --color=never`.
-* Multi-agent repos: inspect status/diff before edits and avoid overwriting others.
-* Use Conventional Commits: feat|fix|refactor|build|ci|chore|docs|style|perf|test.
-
-## Critical Thinking
-
-* Search/read before guessing.
-* Quote exact errors.
-* If unsure, read more code. If still stuck, ask with short options.
-* Call out conflicts and choose the safer path.
-* Treat unrecognized changes as another agent’s work. Avoid touching them.
-* Leave breadcrumb notes in the thread.
+* Quote exact errors. Read more code before guessing.
+* Still stuck: ask, with short options.
 
 ## Reviews
 
-* For PR/diff review: focus on bugs, footguns, bad patterns, and concrete fixes.
-* Sort issues by urgency.
-* Include relevant files for each issue.
-* If the diff is fine, say LGTM.
+* Focus on bugs, footguns, bad patterns, and concrete fixes. Sort by urgency; name the relevant files per issue. If the diff is fine, say LGTM.
 
-## Frontend Aesthetics
+## Frontend
 
-Avoid generic AI-slop UI. Be opinionated and distinctive.
-
-Do:
+Avoid generic AI-slop UI. Be opinionated and distinctive:
 
 * Typography: pick a real font; avoid generic defaults unless the project already uses them.
-* Theme: commit to a palette; use CSS vars; bold accents over timid gradients.
-* Motion: use 1–2 high-impact moments, not random micro-animations.
-* Background: add depth with gradients, texture, or pattern when appropriate.
-
-Avoid:
-
-* Gradient clichés.
-* Generic component grids.
-* Predictable SaaS layouts.
-* Random animation noise.
-
+* Theme: commit to a palette with CSS vars; bold accents over timid gradients.
+* Motion: 1–2 high-impact moments, not random micro-animation noise.
+* Avoid gradient clichés, generic component grids, and predictable SaaS layouts.
