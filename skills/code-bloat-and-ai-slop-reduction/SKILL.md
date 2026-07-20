@@ -1,6 +1,6 @@
 ---
 name: code-bloat-and-ai-slop-reduction
-description: Review code, diffs, refactors, architecture proposals, and AI-generated implementations for unnecessary complexity, overengineering, accidental frameworks, speculative robustness, defensive code, and bloat. Treat code as a liability and apply YAGNI and KISS: prioritize correctness, then deletion and net-negative diffs that preserve behavior, contracts, security, and observability. Use for diffs, refactors, MVPs, tests, migrations, CLIs, APIs, infra, benchmark harnesses, and reduction passes. Produce a verdict, ranked findings, metrics, invariants, and a deletion ledger. LGTM is a valid result.
+description: Review code, diffs, refactors, architecture proposals, and AI-generated implementations for unnecessary complexity, overengineering, accidental frameworks, speculative robustness, defensive code, and bloat. Treat code as a liability and apply YAGNI and KISS. Prioritize correctness, then deletion and net-negative diffs that preserve behavior, contracts, security, and observability. Use for diffs, refactors, MVPs, tests, migrations, CLIs, APIs, infra, benchmark harnesses, and reduction passes. Produce a verdict, ranked findings, metrics, invariants, and a deletion ledger. LGTM is a valid result.
 ---
 
 # Code Bloat and AI Slop Reduction

@@ -24,7 +24,7 @@ Stop at the first rung that holds:
 Rules:
 
 * No speculative abstractions, configurability, or error handling for scenarios that can't happen.
-* Favor net-negative LoC. Deletion over addition, boring over clever, fewest files possible. Keep files under ~500 LOC when practical.
+* Favor net-negative LoC. Deletion over addition, boring over clever, fewest files possible. Keep files under ~3000 LOC when practical.
 * Fix root causes, not symptoms.
 * Surgical diffs: don't refactor, reformat, or "improve" adjacent code; match existing style; remove only orphans your change created; mention pre-existing dead code instead of deleting it. Every changed line should trace to the request. No repo-wide search/replace scripts.
 * When two same-size approaches exist, pick the edge-case-correct one — lazy means less code, not a flimsier algorithm.
@@ -60,15 +60,6 @@ Rules:
 * Quote exact errors. Read more code before guessing.
 * Still stuck: ask, with short options.
 
-## Reviews
+## Tools
 
-* Focus on bugs, footguns, bad patterns, and concrete fixes. Sort by urgency; name the relevant files per issue. If the diff is fine, say LGTM.
-
-## Frontend
-
-Avoid generic AI-slop UI. Be opinionated and distinctive:
-
-* Typography: pick a real font; avoid generic defaults unless the project already uses them.
-* Theme: commit to a palette with CSS vars; bold accents over timid gradients.
-* Motion: 1–2 high-impact moments, not random micro-animation noise.
-* Avoid gradient clichés, generic component grids, and predictable SaaS layouts.
+* `genmedia`: Image generation and manipulation program.
